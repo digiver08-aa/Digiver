@@ -1,0 +1,13 @@
+:root {
+  --font-heading:
+    "Cormorant Garamond",
+    serif;
+
+  --font-body:
+    "Inter",
+    sans-serif;
+
+  --font-display:
+    "Playfair Display",
+    serif;
+}

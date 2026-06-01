@@ -1,0 +1,18 @@
+.mobile-safe-area {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+.responsive-container {
+  width: 100%;
+  margin-inline: auto;
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    max-width: 1280px;
+  }
+}

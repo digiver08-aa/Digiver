@@ -1,0 +1,47 @@
+:root {
+  /* Background */
+
+  --bg-primary: #050816;
+  --bg-surface: #0b1120;
+  --bg-elevated: #111827;
+
+  /* Text */
+
+  --text-primary: #f5f1e8;
+  --text-secondary: #c8c1b4;
+  --text-muted: #8a857d;
+
+  /* Accent */
+
+  --accent-gold: #c9a86a;
+  --accent-bronze: #9b7b4f;
+
+  --accent-primary: #7d6b9e;
+  --accent-secondary: #5a4d74;
+
+  /* State */
+
+  --success: #58755a;
+  --warning: #a07c3a;
+  --danger: #8a4b4b;
+
+  /* Borders */
+
+  --border-primary: #1f2937;
+
+  /* Glass */
+
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Radius */
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Layout */
+
+  --container-width: 1440px;
+}
