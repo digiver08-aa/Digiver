@@ -9,13 +9,7 @@ export default function PageContainer({
 }: PageContainerProps) {
   return (
     <div
-      className="
-        mx-auto
-        w-full
-        max-w-350
-        px-8
-        py-10
-      "
+      className="mx-auto w-full max-w-350 px-8 py-10"
     >
       {children}
     </div>

@@ -15,11 +15,7 @@ export default function AppLayout({
 }: AppLayoutProps) {
   return (
     <div
-      className="
-        min-h-screen
-        bg-background
-        text-foreground
-      "
+      className="min-h-screen bg-background text-foreground"
     >
       <div className="flex min-h-screen">
         {/* Left Sidebar */}

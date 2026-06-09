@@ -24,24 +24,10 @@ export function MobileNavbar() {
         duration: 0.3,
         ease: "easeOut",
       }}
-      className="
-        mobile-safe-area
-        fixed
-        inset-x-4
-        bottom-4
-        z-50
-      "
+      className="mobile-safe-area fixed inset-x-4 bottom-4 z-50"
     >
       <div
-        className="
-          relative
-          overflow-hidden
-          rounded-3xl
-          border border-white/10
-          bg-white/5
-          backdrop-blur-xl
-          shadow-atmospheric
-        "
+        className="relative overflow-hidden rounded-3xlborder border-white/10 bg-white/5 backdrop-blur-xl shadow-atmospheric"
       >
         <div className="grid grid-cols-5 items-center">
           {mobileNavigation.map((item) => {
@@ -58,18 +44,7 @@ export function MobileNavbar() {
                 className="relative flex justify-center"
               >
                 <div
-                  className="
-                    relative
-                    flex
-                    min-h-18
-                    w-full
-                    flex-col
-                    items-center
-                    justify-center
-                    gap-1
-                    px-2
-                    py-3
-                  "
+                  className="relative flex min-h-18 w-full flex-col items-center justify-center gap-1 px-2 py-3"
                 >
                   {isActive && (
                     <motion.div
@@ -79,13 +54,7 @@ export function MobileNavbar() {
                         stiffness: 400,
                         damping: 30,
                       }}
-                      className="
-                        absolute
-                        inset-x-2
-                        inset-y-2
-                        rounded-2xl
-                        bg-white/10
-                      "
+                      className="absolute inset-x-2 inset-y-2 rounded-2xl bg-white/10"
                     />
                   )}
 

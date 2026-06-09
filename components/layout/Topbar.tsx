@@ -17,20 +17,7 @@ export default function Topbar({
       initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className="
-        sticky
-        top-0
-        z-30
-        flex
-        h-20
-        items-center
-        justify-between
-        border-b
-        border-white/10
-        bg-black/30
-        px-8
-        backdrop-blur-xl
-      "
+      className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-white/10 bg-black/30 px-8 backdrop-blur-xl"
     >
       <div>
         {title && (
