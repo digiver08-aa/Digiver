@@ -8,4 +8,4 @@ export type {
   SignInInput,
   AuthUser,
   AuthSession,
-} from "./auth.types";
+} from "../../types/auth.types";

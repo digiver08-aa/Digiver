@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { ThemeProvider } from "./ThemeProvider";
 import { AuthProvider } from "./AuthProvider";
+import { PersonaProvider } from "./PersonaProvider";
 
 interface AppProviderProps {
   children: React.ReactNode;
@@ -12,7 +13,11 @@ interface AppProviderProps {
 export function AppProvider({ children }: AppProviderProps) {
   return (
     <ThemeProvider>
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <PersonaProvider>
+          {children}
+        </PersonaProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

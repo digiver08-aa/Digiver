@@ -6,7 +6,7 @@ import type {
   AuthUser,
   SignInInput,
   SignUpInput,
-} from "./auth.types";
+} from "@/types/auth.types";
 
 class AuthService {
   private getSupabase() {
