@@ -1,13 +1,21 @@
--- =====================================================
+-- ============================================================
 -- DIGIVER
 -- PHASE 6 — CIRCLE SYSTEM
 -- circle_memberships.sql
--- =====================================================
+-- ============================================================
+
+create extension if not exists pgcrypto;
+
+-- ============================================================
+-- MEMBERSHIPS
+-- ============================================================
 
 create table if not exists public.circle_memberships (
-    id uuid primary key default gen_random_uuid(),
+    id uuid primary key
+        default gen_random_uuid(),
 
     circle_id uuid not null,
+
     persona_id uuid not null,
 
     created_at timestamptz not null
@@ -24,28 +32,34 @@ create table if not exists public.circle_memberships (
         on delete cascade,
 
     constraint circle_memberships_unique
-        unique (circle_id, persona_id)
+        unique (
+            circle_id,
+            persona_id
+        )
 );
 
--- =====================================================
+comment on table public.circle_memberships is
+'Membership records connecting personas to circles.';
+
+-- ============================================================
 -- INDEXES
--- =====================================================
+-- ============================================================
 
 create index if not exists
-    circle_memberships_circle_id_idx
+idx_circle_memberships_circle_id
 on public.circle_memberships(circle_id);
 
 create index if not exists
-    circle_memberships_persona_id_idx
+idx_circle_memberships_persona_id
 on public.circle_memberships(persona_id);
 
 create index if not exists
-    circle_memberships_created_at_idx
+idx_circle_memberships_created_at
 on public.circle_memberships(created_at desc);
 
--- =====================================================
+-- ============================================================
 -- OWNER MEMBERSHIP PROTECTION
--- =====================================================
+-- ============================================================
 
 create or replace function
 public.prevent_owner_membership_removal()
@@ -57,8 +71,7 @@ begin
         select 1
         from public.circles c
         where c.id = old.circle_id
-        and c.owner_persona_id =
-            old.persona_id
+        and c.owner_persona_id = old.persona_id
     ) then
         raise exception
             'Circle owner cannot leave their own circle.';
@@ -80,16 +93,20 @@ for each row
 execute function
 public.prevent_owner_membership_removal();
 
--- =====================================================
+-- ============================================================
 -- RLS
--- =====================================================
+-- ============================================================
 
 alter table public.circle_memberships
 enable row level security;
 
--- =====================================================
+-- ============================================================
 -- SELECT
--- =====================================================
+-- ============================================================
+
+drop policy if exists
+"Circle memberships are viewable by everyone"
+on public.circle_memberships;
 
 create policy
 "Circle memberships are viewable by everyone"
@@ -97,9 +114,13 @@ on public.circle_memberships
 for select
 using (true);
 
--- =====================================================
+-- ============================================================
 -- INSERT
--- =====================================================
+-- ============================================================
+
+drop policy if exists
+"Users can join circles with owned personas"
+on public.circle_memberships;
 
 create policy
 "Users can join circles with owned personas"
@@ -115,9 +136,13 @@ with check (
     )
 );
 
--- =====================================================
+-- ============================================================
 -- DELETE
--- =====================================================
+-- ============================================================
+
+drop policy if exists
+"Users can leave circles with owned personas"
+on public.circle_memberships;
 
 create policy
 "Users can leave circles with owned personas"
@@ -133,9 +158,13 @@ using (
     )
 );
 
--- =====================================================
+-- ============================================================
 -- UPDATE
--- =====================================================
+-- ============================================================
+
+drop policy if exists
+"No membership updates"
+on public.circle_memberships;
 
 create policy
 "No membership updates"
