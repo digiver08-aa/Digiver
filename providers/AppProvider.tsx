@@ -6,6 +6,7 @@ import { ThemeProvider } from "./ThemeProvider";
 import { AuthProvider } from "./AuthProvider";
 import { PersonaProvider } from "./PersonaProvider";
 import { FeedProvider } from "./FeedProvider";
+import CircleProvider from "./CircleProvider";
 
 interface AppProviderProps {
   children: React.ReactNode;
@@ -17,7 +18,9 @@ export function AppProvider({ children }: AppProviderProps) {
       <AuthProvider>
         <PersonaProvider>
           <FeedProvider>
-            {children}
+            <CircleProvider>
+              {children}
+            </CircleProvider>
           </FeedProvider>
         </PersonaProvider>
       </AuthProvider>
