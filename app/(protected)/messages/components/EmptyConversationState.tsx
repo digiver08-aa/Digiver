@@ -1,0 +1,18 @@
+"use client";
+
+export default function EmptyConversationState() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="text-center">
+        <h2 className="text-lg font-semibold">
+          No Conversation Selected
+        </h2>
+
+        <p className="mt-2 text-sm text-muted-foreground">
+          Select a conversation to start
+          messaging.
+        </p>
+      </div>
+    </div>
+  );
+}

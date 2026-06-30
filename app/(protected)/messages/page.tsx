@@ -1,7 +1,16 @@
-export default function MessagesPage() {
+import { getConversations } from "@/services/messages";
+
+import MessagesPageClient from "././MessagesPageClient";
+
+export default async function MessagesPage() {
+  const response =
+    await getConversations();
+
   return (
-    <div>
-      Messages Page
-    </div>
+    <MessagesPageClient
+      initialConversations={
+        response.conversations
+      }
+    />
   );
 }
