@@ -21,14 +21,20 @@ export async function sendMessage(
   const content = input.content.trim();
 
   if (!content) {
-    throw new Error("Message content is required");
+    throw new Error(
+      "Message content is required"
+    );
   }
 
   const { data, error } = await supabase
     .from("messages")
     .insert({
-      conversation_id: input.conversation_id,
-      sender_persona_id: input.sender_persona_id,
+      conversation_id:
+        input.conversation_id,
+
+      sender_persona_id:
+        input.sender_persona_id,
+
       content,
     })
     .select()
@@ -36,7 +42,8 @@ export async function sendMessage(
 
   if (error || !data) {
     throw new Error(
-      error?.message ?? "Failed to send message"
+      error?.message ??
+        "Failed to send message"
     );
   }
 
@@ -66,7 +73,8 @@ export async function getMessages(
 
   if (error || !data) {
     throw new Error(
-      error?.message ?? "Failed to fetch messages"
+      error?.message ??
+        "Failed to fetch messages"
     );
   }
 

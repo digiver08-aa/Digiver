@@ -51,7 +51,9 @@ export async function addReaction(
       return {
         success: false,
         reaction: null,
-        error: error?.message ?? "Failed to react",
+        error:
+          error?.message ??
+          "Failed to react",
       };
     }
 
