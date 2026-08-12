@@ -1,32 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
 
 import "./globals.css";
 
 import { AppProvider } from "@/providers/AppProvider";
 import { siteConfig } from "@/config/site.config";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+
   title: {
     default: siteConfig.name,
     template: `%s • ${siteConfig.name}`,
   },
+
   description: siteConfig.description,
+
   keywords: siteConfig.keywords,
+
   creator: siteConfig.creator,
 
   openGraph: {
@@ -36,6 +26,7 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+
     images: [
       {
         url: siteConfig.ogImage,
@@ -76,12 +67,8 @@ export default function RootLayout({
   children,
 }: RootLayoutProps) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${inter.variable} ${cormorant.variable}`}
-    >
-      <body className="min-h-screen bg-background font-sans antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <body>
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

@@ -71,6 +71,9 @@ on public.circles(owner_persona_id);
 create index if not exists idx_circles_created_at
 on public.circles(created_at desc);
 
+create index if not exists idx_circles_lower_name
+on public.circles (lower(name));
+
 -- ============================================================
 -- UPDATED AT TRIGGER
 -- ============================================================

@@ -102,6 +102,9 @@ on public.personas(is_public);
 create index if not exists idx_personas_created_at
 on public.personas(created_at desc);
 
+create index if not exists idx_personas_lower_name
+on public.personas (lower(name));
+
 -- ============================================================
 -- RLS
 -- ============================================================
