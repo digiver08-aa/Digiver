@@ -27,13 +27,13 @@ export function MobileNavbar() {
       className="mobile-safe-area fixed inset-x-4 bottom-4 z-50"
     >
       <div
-        className="relative overflow-hidden rounded-3xlborder border-white/10 bg-white/5 backdrop-blur-xl shadow-atmospheric"
+        className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-atmospheric"
       >
         <div className="grid grid-cols-5 items-center">
           {mobileNavigation.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+              (item.href !== "/" && pathname.startsWith(`${item.href}/`));
 
             const Icon = item.icon;
 
@@ -41,7 +41,8 @@ export function MobileNavbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative flex justify-center"
+                aria-current={isActive ? "page" : undefined}
+                className="relative flex justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent"
               >
                 <div
                   className="relative flex min-h-18 w-full flex-col items-center justify-center gap-1 px-2 py-3"

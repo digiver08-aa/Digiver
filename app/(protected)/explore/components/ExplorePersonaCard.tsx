@@ -1,11 +1,10 @@
-"use client";
+/* eslint-disable @next/next/no-img-element */
 
 // ============================================================
 // DIGIVER
 // ExplorePersonaCard
 // ============================================================
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { User } from "lucide-react";
@@ -23,7 +22,7 @@ export function ExplorePersonaCard({
 }: ExplorePersonaCardProps) {
   return (
     <Link
-      href={`/persona/${persona.slug}`}
+      href={`/persona/${persona.id}`}
       aria-label={`Open ${persona.name}`}
       className={[
         `
@@ -48,12 +47,10 @@ export function ExplorePersonaCard({
     >
       <div className="relative h-32 w-full overflow-hidden bg-muted">
         {persona.bannerUrl ? (
-          <Image
+          <img
             src={persona.bannerUrl}
             alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center">
@@ -67,12 +64,10 @@ export function ExplorePersonaCard({
         <div className="absolute -bottom-8 left-5">
           <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-background bg-muted">
             {persona.avatarUrl ? (
-              <Image
+              <img
                 src={persona.avatarUrl}
                 alt={`${persona.name} avatar`}
-                fill
-                sizes="64px"
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
               <User

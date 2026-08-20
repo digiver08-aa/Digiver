@@ -129,7 +129,7 @@ function ReputationHistory({
           </Badge>
 
           <div className="space-y-1">
-            <h3 className="font-medium">
+            <h3 className="break-words font-medium">
               No activity
             </h3>
 
@@ -187,7 +187,7 @@ function ReputationHistory({
               "
             >
               <div className="flex items-start justify-between gap-4">
-                <div className="flex gap-3">
+                <div className="min-w-0 flex flex-1 gap-3">
                   <div
                     className="
                       flex
@@ -230,8 +230,11 @@ function ReputationHistory({
                   </div>
                 </div>
 
-                <Badge variant="accent">
-                  +
+                <Badge
+                  variant="accent"
+                  className="shrink-0 tabular-nums"
+                >
+                  {event.scoreDelta > 0 ? "+" : ""}
                   {event.scoreDelta}
                 </Badge>
               </div>

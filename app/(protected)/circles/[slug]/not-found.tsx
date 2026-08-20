@@ -14,10 +14,10 @@ export default function NotFound() {
         </p>
 
         <Link
-          href="/circles"
+          href="/explore"
           className="mt-6 inline-flex rounded-md border px-4 py-2"
         >
-          Browse Circles
+          Return to Explore
         </Link>
       </div>
     </div>

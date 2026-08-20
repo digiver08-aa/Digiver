@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -27,12 +29,19 @@ export function LoginForm() {
 
     setError("");
 
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setError("Email is required.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
       const result =
         await authService.signIn({
-          email,
+          email: normalizedEmail,
           password,
         });
 
@@ -55,6 +64,7 @@ export function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      aria-describedby={error ? "login-error" : undefined}
       className="flex flex-col gap-4"
     >
       <h1 className="text-2xl font-semibold">
@@ -62,7 +72,7 @@ export function LoginForm() {
       </h1>
 
       {error ? (
-        <p className="text-sm text-red-500">
+        <p id="login-error" role="alert" aria-live="assertive" className="text-sm text-red-500">
           {error}
         </p>
       ) : null}
@@ -75,6 +85,7 @@ export function LoginForm() {
         <input
           id="email"
           type="email"
+          inputMode="email"
           autoComplete="email"
           value={email}
           disabled={isSubmitting}
@@ -105,6 +116,15 @@ export function LoginForm() {
           required
           className="rounded-md border px-3 py-2"
         />
+      </div>
+
+      <div className="flex flex-col gap-2 text-sm">
+        <Link href="/forgot-password" className="underline underline-offset-4">
+          Forgot your password?
+        </Link>
+        <span className="text-muted-foreground">
+          New to Digiver? <Link href="/signup" className="underline underline-offset-4">Create an account</Link>
+        </span>
       </div>
 
       <button

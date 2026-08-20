@@ -86,7 +86,7 @@ export default async function CircleProfilePage({
     ]);
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-6">
+    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
       <div className="space-y-6">
         <CircleHeader
           circle={circle}
@@ -104,9 +104,7 @@ export default async function CircleProfilePage({
 
             <CircleRules />
 
-            <CircleFeed
-              circleId={circle.id}
-            />
+            <CircleFeed />
           </div>
 
           <div className="space-y-6">

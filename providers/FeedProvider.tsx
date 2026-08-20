@@ -39,6 +39,12 @@ export function FeedProvider({
   const [loading, setLoading] =
     useState(false);
 
+  const [loadingMore, setLoadingMore] =
+    useState(false);
+
+  const [nextCursor, setNextCursor] =
+    useState<string | null>(null);
+
   const [error, setError] =
     useState<string | null>(null);
 
@@ -60,6 +66,7 @@ export function FeedProvider({
         }
 
         setPosts(response.posts);
+        setNextCursor(response.nextCursor);
       } catch (error) {
         setError(
           error instanceof Error
@@ -76,6 +83,39 @@ export function FeedProvider({
       void refreshFeed();
     });
   }, [refreshFeed]);
+
+  const loadMore = useCallback(async () => {
+    if (!nextCursor || loading || loadingMore) {
+      return;
+    }
+
+    try {
+      setLoadingMore(true);
+      setError(null);
+
+      const response = await getFeed(nextCursor);
+
+      if (!response.success) {
+        setError(response.error ?? "Failed to load more posts");
+        return;
+      }
+
+      setPosts((prev) => {
+        const existingIds = new Set(prev.map((post) => post.id));
+        const additions = response.posts.filter((post) => !existingIds.has(post.id));
+        return [...prev, ...additions];
+      });
+      setNextCursor(response.nextCursor);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to load more posts"
+      );
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loading, loadingMore, nextCursor]);
 
   const createPost = useCallback(
     async (
@@ -107,8 +147,17 @@ export function FeedProvider({
         return false;
       }
 
-      const createdPost: Post =
-        response.post;
+      const createdPost: Post = {
+        ...response.post,
+        persona: persona
+          ? {
+              id: persona.id,
+              display_name: persona.name,
+              title: persona.title,
+              avatar_url: persona.avatarUrl,
+            }
+          : response.post.persona,
+      };
 
       setPosts((prev) => [
         createdPost,
@@ -281,12 +330,17 @@ export function FeedProvider({
       [persona, posts]
     );
 
+  const hasMore = nextCursor !== null;
+
   const value = useMemo(
     () => ({
       posts,
       loading,
+      loadingMore,
+      hasMore,
       error,
       refreshFeed,
+      loadMore,
       createPost,
       addReaction,
       removeReaction,
@@ -294,8 +348,11 @@ export function FeedProvider({
     [
       posts,
       loading,
+      loadingMore,
+      hasMore,
       error,
       refreshFeed,
+      loadMore,
       createPost,
       addReaction,
       removeReaction,

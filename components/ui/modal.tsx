@@ -9,6 +9,7 @@ export interface ModalProps {
   onOpenChange: (open: boolean) => void;
   title?: string;
   children: React.ReactNode;
+  titleId?: string;
 }
 
 export function Modal({
@@ -16,6 +17,7 @@ export function Modal({
   onOpenChange,
   title,
   children,
+  titleId,
 }: ModalProps) {
   return (
     <Dialog.Root
@@ -45,15 +47,16 @@ export function Modal({
           "
         >
           <div className="mb-4 flex items-center justify-between">
-            <Dialog.Title className="font-semibold">
+            <Dialog.Title id={titleId} className="font-semibold">
               {title}
             </Dialog.Title>
 
             <Dialog.Close asChild>
               <button
-                className="rounded-md p-1 hover:bg-white/5"
+                className="min-h-11 min-w-11 rounded-md p-2 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                aria-label="Close dialog"
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             </Dialog.Close>
           </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 
 import { authService } from "@/services/auth";
@@ -21,11 +23,18 @@ export default function ForgotPasswordForm() {
     setError("");
     setSuccess("");
 
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setError("Email is required.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const result =
-        await authService.resetPassword(email);
+        await authService.resetPassword(normalizedEmail);
 
       if (!result.success) {
         setError(result.error);
@@ -55,6 +64,7 @@ export default function ForgotPasswordForm() {
 
         <form
           onSubmit={handleSubmit}
+          aria-describedby={error ? "forgot-password-status" : success ? "forgot-password-success" : undefined}
           className="space-y-4"
         >
           <div>
@@ -68,6 +78,8 @@ export default function ForgotPasswordForm() {
             <input
               id="email"
               type="email"
+              inputMode="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) =>
@@ -79,16 +91,20 @@ export default function ForgotPasswordForm() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-500">
+            <p id="forgot-password-status" role="alert" aria-live="assertive" className="text-sm text-red-500">
               {error}
             </p>
           )}
 
           {success && (
-            <p className="text-sm text-green-500">
+            <p id="forgot-password-success" role="status" aria-live="polite" className="text-sm text-green-500">
               {success}
             </p>
           )}
+
+          <p className="text-sm text-muted-foreground">
+            Remembered your password? <Link href="/login" className="underline underline-offset-4">Log in</Link>
+          </p>
 
           <button
             type="submit"

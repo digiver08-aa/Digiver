@@ -109,6 +109,12 @@ export default async function CircleMembers({
       )}
 
       <div className="space-y-2">
+        {members.length === 0 ? (
+          <p className="rounded-lg border p-3 text-sm text-muted-foreground">
+            No members to display.
+          </p>
+        ) : null}
+
         {members.map((member) => (
           <div
             key={member.id}

@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import { MobileNavbar } from "./MobileNavbar";
+
 interface AppLayoutProps {
   leftSidebar?: ReactNode;
   rightSidebar?: ReactNode;
@@ -31,6 +33,8 @@ export default function AppLayout({
             className="
               flex-1
               overflow-x-hidden
+              pb-24
+              xl:pb-0
             "
           >
             {children}
@@ -42,6 +46,8 @@ export default function AppLayout({
           {rightSidebar}
         </div>
       </div>
+
+      <MobileNavbar />
     </div>
   );
 }

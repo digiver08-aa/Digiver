@@ -126,10 +126,11 @@ export function PersonaCreateForm() {
   return (
     <form
       onSubmit={handleSubmit}
+      aria-describedby={error ? "persona-create-error" : undefined}
       className="space-y-6 rounded-xl border p-6"
     >
       {error && (
-        <div className="rounded-md border border-destructive p-3 text-sm text-destructive">
+        <div id="persona-create-error" role="alert" aria-live="assertive" className="rounded-md border border-destructive p-3 text-sm text-destructive">
           {error}
         </div>
       )}

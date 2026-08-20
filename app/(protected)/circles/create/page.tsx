@@ -23,7 +23,7 @@ export default async function CreateCirclePage() {
     .maybeSingle();
 
   if (!persona) {
-    redirect("/personas/create");
+    redirect("/persona/create");
   }
 
   return (

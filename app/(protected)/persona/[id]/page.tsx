@@ -1,4 +1,5 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+
 import { notFound } from "next/navigation";
 
 import { getPersonaById } from "@/services/personas/server";
@@ -23,32 +24,35 @@ export default async function PersonaPage({
   const persona = response.data;
 
   return (
-    <main className="mx-auto max-w-5xl p-6">
+    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
       <section className="overflow-hidden rounded-2xl border bg-card">
-        <div className="relative h-48 w-full">
+        <div className="relative h-36 w-full sm:h-48">
           {persona.bannerUrl ? (
-            <Image
-              src={persona.bannerUrl}
-              alt={`${persona.name} banner`}
-              fill
-              className="object-cover"
-              priority
-            />
+            <>
+              {/* User-provided image URLs cannot be constrained to a fixed next/image host. */}
+              <img
+                src={persona.bannerUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </>
           ) : (
             <div className="h-full w-full bg-linear-to-r from-slate-900 via-slate-800 to-slate-900" />
           )}
         </div>
 
-        <div className="p-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+        <div className="p-4 sm:p-6">
+          <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center">
             <div className="relative h-24 w-24 overflow-hidden rounded-full border bg-muted">
               {persona.avatarUrl ? (
-                <Image
-                  src={persona.avatarUrl}
-                  alt={persona.name}
-                  fill
-                  className="object-cover"
-                />
+                <>
+                  {/* User-provided image URLs cannot be constrained to a fixed next/image host. */}
+                      <img
+                    src={persona.avatarUrl}
+                    alt={persona.name}
+                    className="h-full w-full object-cover"
+                  />
+                </>
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-3xl font-bold">
                   {persona.name.charAt(0).toUpperCase()}
@@ -56,8 +60,8 @@ export default async function PersonaPage({
               )}
             </div>
 
-            <div>
-              <h1 className="text-3xl font-bold">
+            <div className="min-w-0">
+              <h1 className="break-words text-2xl font-bold sm:text-3xl">
                 {persona.name}
               </h1>
 
@@ -75,7 +79,7 @@ export default async function PersonaPage({
                 Biography
               </h2>
 
-              <p className="whitespace-pre-wrap text-muted-foreground">
+              <p className="wrap-break-word whitespace-pre-wrap text-muted-foreground">
                 {persona.bio}
               </p>
             </div>

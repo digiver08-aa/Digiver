@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import Sidebar from "@/components/layout/Sidebar";
 import Topbar from "@/components/layout/Topbar";
+import SidebarNavigation from "@/components/layout/SidebarNavigation";
 
 interface ProtectedLayoutProps {
   children: ReactNode;
@@ -20,28 +21,12 @@ export default function ProtectedLayout({
         <Sidebar position="left">
           <div className="space-y-8">
             <div>
-              <h2 className="text-lg font-semibold">
+              <h2 className="text-lg font-semibold tracking-wide">
                 Digiver
               </h2>
             </div>
 
-            <nav className="space-y-3">
-              <div className="rounded-xl bg-white/5 p-3">
-                Home
-              </div>
-
-              <div className="rounded-xl bg-white/5 p-3">
-                Worlds
-              </div>
-
-              <div className="rounded-xl bg-white/5 p-3">
-                Society
-              </div>
-
-              <div className="rounded-xl bg-white/5 p-3">
-                Profile
-              </div>
-            </nav>
+            <SidebarNavigation />
           </div>
         </Sidebar>
       }

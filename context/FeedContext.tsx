@@ -13,9 +13,15 @@ export interface FeedContextValue {
 
   loading: boolean;
 
+  loadingMore: boolean;
+
+  hasMore: boolean;
+
   error: string | null;
 
   refreshFeed: () => Promise<void>;
+
+  loadMore: () => Promise<void>;
 
   createPost: (
     input: CreatePostInput

@@ -20,7 +20,7 @@ const AUTH_ROUTES = [
   "/reset-password",
 ];
 
-export async function middleware(
+export async function proxy(
   request: NextRequest
 ) {
   const {

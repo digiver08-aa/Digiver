@@ -1,6 +1,5 @@
-"use client";
+/* eslint-disable @next/next/no-img-element */
 
-import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -32,12 +31,10 @@ export function Avatar({
       )}
     >
       {src ? (
-        <Image
+        <img
           src={src}
           alt={alt}
-          fill
-          sizes="100vw"
-          className="object-cover"
+          className="h-full w-full object-cover"
         />
       ) : (
         <div className="h-full w-full bg-muted" />

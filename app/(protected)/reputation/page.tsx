@@ -1,10 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/supabase/server";
-
-import {
-  getReputationHistory,
-} from "@/services/reputation";
+import { getReputationHistory } from "@/services/reputation";
 
 import ReputationPageClient from "./ReputationPageClient";
 
@@ -34,13 +31,33 @@ export default async function ReputationPage() {
     redirect("/persona/create");
   }
 
-  const reputation =
-    await getReputationHistory(persona.id);
+  let reputation: Awaited<
+    ReturnType<typeof getReputationHistory>
+  >["reputation"] = null;
+
+  let history: Awaited<
+    ReturnType<typeof getReputationHistory>
+  >["events"] = [];
+
+  let reputationError: string | undefined;
+
+  try {
+    const result = await getReputationHistory(persona.id);
+
+    reputation = result.reputation;
+    history = result.events;
+  } catch (err) {
+    reputationError =
+      err instanceof Error
+        ? err.message
+        : "Unable to load reputation.";
+  }
 
   return (
     <ReputationPageClient
-      reputation={reputation.reputation}
-      history={reputation.events}
+      reputation={reputation}
+      history={history}
+      error={reputationError}
     />
   );
 }

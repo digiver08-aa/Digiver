@@ -7,9 +7,7 @@ import {
   useState,
 } from "react";
 
-import {
-  NotificationContext,
-} from "@/context/NotificationContext";
+import { NotificationContext } from "@/context/NotificationContext";
 
 import {
   getNotifications,
@@ -18,13 +16,10 @@ import {
   subscribeToNotifications,
 } from "@/services/notifications";
 
-import type {
-  Notification,
-} from "@/types/notification.types";
+import type { Notification } from "@/types/notification.types";
 
 interface NotificationProviderProps {
   personaId: string;
-
   children: React.ReactNode;
 }
 
@@ -32,58 +27,55 @@ export function NotificationProvider({
   personaId,
   children,
 }: NotificationProviderProps) {
-  const [
-    notifications,
-    setNotifications,
-  ] = useState<Notification[]>([]);
+  const [notifications, setNotifications] =
+    useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [markingReadId, setMarkingReadId] =
+    useState<string | null>(null);
+  const [markingAllRead, setMarkingAllRead] =
+    useState(false);
 
-  const [
-    unreadCount,
-    setUnreadCount,
-  ] = useState(0);
+  const refresh = useCallback(async () => {
+    try {
+      setError(null);
+      const response = await getNotifications({ personaId });
 
-  const [
-    loading,
-    setLoading,
-  ] = useState(true);
-
-  const refresh =
-    useCallback(async () => {
-      const response =
-        await getNotifications({
-          personaId,
-        });
-
-      setNotifications(
-        response.notifications
+      setNotifications(response.notifications);
+      setUnreadCount(response.unreadCount);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to load notifications.",
       );
-
-      setUnreadCount(
-        response.unreadCount
-      );
-    }, [personaId]);
+    }
+  }, [personaId]);
 
   useEffect(() => {
     let mounted = true;
 
     async function initialize() {
+      setLoading(true);
+      setError(null);
+
       try {
         const response =
-          await getNotifications({
-            personaId,
-          });
+          await getNotifications({ personaId });
 
-        if (!mounted) {
-          return;
+        if (!mounted) return;
+
+        setNotifications(response.notifications);
+        setUnreadCount(response.unreadCount);
+      } catch (err) {
+        if (mounted) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Failed to load notifications.",
+          );
         }
-
-        setNotifications(
-          response.notifications
-        );
-
-        setUnreadCount(
-          response.unreadCount
-        );
       } finally {
         if (mounted) {
           setLoading(false);
@@ -91,7 +83,7 @@ export function NotificationProvider({
       }
     }
 
-    initialize();
+    void initialize();
 
     return () => {
       mounted = false;
@@ -100,33 +92,52 @@ export function NotificationProvider({
 
   useEffect(() => {
     let subscription:
-      | Awaited<
-          ReturnType<
-            typeof subscribeToNotifications
-          >
-        >
+      | Awaited<ReturnType<typeof subscribeToNotifications>>
       | undefined;
 
     async function setup() {
-      subscription =
-        await subscribeToNotifications(
+      try {
+        subscription = await subscribeToNotifications(
           personaId,
           (notification) => {
-            setNotifications(
-              (previous) => [
-                notification,
-                ...previous,
-              ]
-            );
+            setNotifications((previous) => {
+              const existing = previous.find(
+                (item) => item.id === notification.id,
+              );
 
-            setUnreadCount(
-              (count) => count + 1
-            );
-          }
+              if (
+                !notification.is_read &&
+                !existing
+              ) {
+                setUnreadCount((count) => count + 1);
+              }
+
+              if (
+                existing &&
+                existing.is_read === notification.is_read
+              ) {
+                return previous;
+              }
+
+              return [
+                notification,
+                ...previous.filter(
+                  (item) => item.id !== notification.id,
+                ),
+              ];
+            });
+          },
         );
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to connect to notification updates.",
+        );
+      }
     }
 
-    setup();
+    void setup();
 
     return () => {
       if (subscription) {
@@ -135,99 +146,105 @@ export function NotificationProvider({
     };
   }, [personaId]);
 
-  const markRead =
-    useCallback(
-      async (
-        notificationId: string
-      ) => {
-        await markAsRead(
-          notificationId
-        );
+  const markReadAction = useCallback(
+    async (notificationId: string) => {
+      setMarkingReadId(notificationId);
+      setError(null);
 
-        setNotifications(
-          (previous) =>
-            previous.map(
-              (notification) => {
-                if (
-                  notification.id !==
-                  notificationId
-                ) {
-                  return notification;
-                }
+      try {
+        await markAsRead(notificationId);
 
-                if (
-                  notification.is_read
-                ) {
-                  return notification;
-                }
+        setNotifications((previous) =>
+          previous.map((notification) => {
+            if (
+              notification.id !== notificationId ||
+              notification.is_read
+            ) {
+              return notification;
+            }
 
-                return {
-                  ...notification,
-                  is_read: true,
-                  read_at:
-                    new Date().toISOString(),
-                };
-              }
-            )
-        );
-
-        setUnreadCount(
-          (count) =>
-            Math.max(0, count - 1)
-        );
-      },
-      []
-    );
-
-  const markAllRead =
-    useCallback(async () => {
-      await markAllAsRead(
-        personaId
-      );
-
-      setNotifications(
-        (previous) =>
-          previous.map(
-            (notification) => ({
+            return {
               ...notification,
               is_read: true,
-              read_at:
-                new Date().toISOString(),
-            })
-          )
-      );
+              read_at: new Date().toISOString(),
+            };
+          }),
+        );
 
+        setUnreadCount((count) => Math.max(0, count - 1));
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Failed to mark notification as read.";
+        setError(message);
+        throw new Error(message);
+      } finally {
+        setMarkingReadId(null);
+      }
+    },
+    [],
+  );
+
+  const markAllReadAction = useCallback(async () => {
+    if (unreadCount <= 0 || markingAllRead) {
+      return;
+    }
+
+    setMarkingAllRead(true);
+    setError(null);
+
+    try {
+      await markAllAsRead(personaId);
+
+      const readAt = new Date().toISOString();
+      setNotifications((previous) =>
+        previous.map((notification) => ({
+          ...notification,
+          is_read: true,
+          read_at: readAt,
+        })),
+      );
       setUnreadCount(0);
-    }, [personaId]);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Failed to mark all notifications as read.";
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setMarkingAllRead(false);
+    }
+  }, [personaId, unreadCount, markingAllRead]);
 
   const value = useMemo(
     () => ({
       notifications,
-
       unreadCount,
-
       loading,
-
+      error,
+      markingReadId,
+      markingAllRead,
       refresh,
-
-      markRead,
-
-      markAllRead,
+      markRead: markReadAction,
+      markAllRead: markAllReadAction,
     }),
     [
       notifications,
       unreadCount,
       loading,
+      error,
+      markingReadId,
+      markingAllRead,
       refresh,
-      markRead,
-      markAllRead,
-    ]
+      markReadAction,
+      markAllReadAction,
+    ],
   );
 
   return (
-    <NotificationContext.Provider
-      value={value}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );

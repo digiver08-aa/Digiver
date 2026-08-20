@@ -21,6 +21,8 @@ export const Input = React.forwardRef<
       error,
       leftIcon,
       rightIcon,
+      "aria-describedby": ariaDescribedBy,
+      id,
       ...props
     },
     ref
@@ -36,6 +38,9 @@ export const Input = React.forwardRef<
 
           <input
             ref={ref}
+            id={id}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={[ariaDescribedBy, error && id ? `${id}-error` : undefined].filter(Boolean).join(" ") || undefined}
             className={cn(
               "h-11 w-full rounded-xl",
               "border border-white/10",
@@ -59,7 +64,7 @@ export const Input = React.forwardRef<
         </div>
 
         {error && (
-          <p className="mt-1 text-sm text-red-400">
+          <p id={id ? `${id}-error` : undefined} role="alert" className="mt-1 text-sm text-red-400">
             {error}
           </p>
         )}

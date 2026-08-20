@@ -87,7 +87,7 @@ export function ReactionBar({
   }
 
   return (
-    <div className="mt-4 flex flex-wrap gap-2">
+    <div className="mt-4 flex flex-wrap gap-2" aria-label="Post reactions">
       {REACTIONS.map(
         ({
           type,
@@ -96,15 +96,18 @@ export function ReactionBar({
         }) => (
           <button
             key={type}
+            type="button"
             onClick={() =>
               handleReaction(type)
             }
             disabled={loading}
+            aria-pressed={post.user_reaction === type}
+            aria-label={`${label} reaction, ${post.reaction_summary[type]} total`}
             className={`rounded-lg border px-3 py-2 text-xs transition ${
               post.user_reaction ===
               type
                 ? "border-amber-500 bg-amber-500/10 text-amber-300"
-                : "border-stone-700 bg-stone-900 text-stone-400 hover:border-stone-500"
+                : "border-stone-700 bg-stone-900 text-stone-400 hover:border-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
             }`}
           >
             {icon} {label} (

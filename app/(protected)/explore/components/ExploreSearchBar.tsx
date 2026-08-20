@@ -71,6 +71,20 @@ export function ExploreSearchBar({
   }, [query]);
 
   /*
+   * Keep the latest search callback available without making
+   * the debounce effect restart whenever ExploreProvider
+   * recreates the search callback due to filter changes.
+   *
+   * This prevents filter changes from scheduling a duplicate
+   * debounced search for the current input value.
+   */
+  const searchRef = useRef(search);
+
+  useEffect(() => {
+    searchRef.current = search;
+  }, [search]);
+
+  /*
    * Debounced automatic search.
    *
    * IMPORTANT:
@@ -89,19 +103,17 @@ export function ExploreSearchBar({
       /*
        * Do not execute a stale timer.
        */
-      if (
-        latestValueRef.current !== value
-      ) {
+      if (latestValueRef.current !== value) {
         return;
       }
 
-      void search(normalizedValue);
+      void searchRef.current(normalizedValue);
     }, debounceMs);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [value, debounceMs, search]);
+  }, [value, debounceMs]);
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -125,9 +137,9 @@ export function ExploreSearchBar({
         .trim()
         .slice(0, MAX_SEARCH_QUERY_LENGTH);
 
-      void search(normalizedValue);
+      void searchRef.current(normalizedValue);
     },
-    [search, value],
+    [value],
   );
 
   const handleClear = useCallback(() => {
@@ -141,8 +153,8 @@ export function ExploreSearchBar({
      * The provider is responsible for invalidating any
      * previous in-flight request.
      */
-    void search("");
-  }, [search]);
+    void searchRef.current("");
+  }, []);
 
   return (
     <form

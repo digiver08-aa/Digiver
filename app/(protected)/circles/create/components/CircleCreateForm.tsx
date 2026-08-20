@@ -67,6 +67,7 @@ export default function CircleCreateForm({
   return (
     <form
       onSubmit={handleSubmit}
+      aria-describedby={error ? "circle-create-error" : undefined}
       className="space-y-6"
     >
       <div>
@@ -178,7 +179,7 @@ export default function CircleCreateForm({
       </div>
 
       {error && (
-        <div className="rounded-md border border-red-500 p-3 text-sm text-red-500">
+        <div id="circle-create-error" role="alert" aria-live="assertive" className="rounded-md border border-red-500 p-3 text-sm text-red-500">
           {error}
         </div>
       )}
@@ -186,7 +187,8 @@ export default function CircleCreateForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md border px-4 py-2"
+        aria-busy={isSubmitting}
+        className="min-h-11 rounded-md border px-4 py-2 transition hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting
           ? "Creating..."

@@ -4,6 +4,18 @@
 @import "../styles/typography/typography.css";
 @import "../styles/utilities/responsive.css";
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-accent: var(--gold);
+  --color-primary: var(--gold);
+  --color-destructive: var(--danger);
+}
+
 :root {
   --background: #050816;
   --foreground: #f5f1e8;
@@ -16,6 +28,7 @@
   --card: rgba(10, 15, 28, 0.72);
 
   --gold: #c8a96b;
+  --danger: #8a4b4b;
 }
 
 * {
@@ -36,6 +49,7 @@ body {
     var(--background);
 
   color: var(--foreground);
+  font-family: var(--font-body);
 
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -64,5 +78,15 @@ body {
 
   .text-foreground {
     color: var(--foreground);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

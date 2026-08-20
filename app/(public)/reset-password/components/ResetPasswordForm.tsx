@@ -86,12 +86,18 @@ export default function ResetPasswordForm() {
 
         <form
           onSubmit={handleSubmit}
+          aria-describedby={error ? "reset-password-error" : success ? "reset-password-success" : undefined}
           className="space-y-4"
         >
+          <label htmlFor="reset-password" className="sr-only">New Password</label>
           <input
+            id="reset-password"
             type="password"
             placeholder="New Password"
             required
+            minLength={8}
+            autoComplete="new-password"
+            disabled={loading}
             value={password}
             onChange={(e) =>
               setPassword(
@@ -101,10 +107,15 @@ export default function ResetPasswordForm() {
             className="w-full rounded border p-3"
           />
 
+          <label htmlFor="reset-confirm-password" className="sr-only">Confirm Password</label>
           <input
+            id="reset-confirm-password"
             type="password"
             placeholder="Confirm Password"
             required
+            minLength={8}
+            autoComplete="new-password"
+            disabled={loading}
             value={confirmPassword}
             onChange={(e) =>
               setConfirmPassword(
@@ -115,13 +126,13 @@ export default function ResetPasswordForm() {
           />
 
           {error && (
-            <p className="text-red-500">
+            <p id="reset-password-error" role="alert" aria-live="assertive" className="text-red-500">
               {error}
             </p>
           )}
 
           {success && (
-            <p className="text-green-500">
+            <p id="reset-password-success" role="status" aria-live="polite" className="text-green-500">
               {success}
             </p>
           )}

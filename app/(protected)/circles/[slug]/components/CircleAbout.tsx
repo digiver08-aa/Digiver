@@ -13,7 +13,7 @@ export default function CircleAbout({
         About
       </h2>
 
-      <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+      <p className="wrap-break-word whitespace-pre-wrap text-sm text-muted-foreground">
         {description ??
           "No description available."}
       </p>

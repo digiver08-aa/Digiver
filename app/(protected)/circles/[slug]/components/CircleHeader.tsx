@@ -1,6 +1,8 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 
 import { Circle } from "@/types/circle.types";
+
+import CircleMembershipButton from "./CircleMembershipButton";
 
 interface Owner {
   id: string;
@@ -27,44 +29,38 @@ export default function CircleHeader({
     <div className="overflow-hidden rounded-xl border">
       <div className="relative h-48 w-full bg-muted md:h-64">
         {circle.banner_url ? (
-          <Image
+          <img
             src={circle.banner_url}
             alt={circle.name}
-            fill
-            className="object-cover"
+            className="h-full w-full object-cover"
           />
         ) : null}
       </div>
 
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="flex gap-4">
+          <div className="flex min-w-0 gap-4">
             <div className="relative -mt-16 h-24 w-24 overflow-hidden rounded-full border-4 border-background bg-muted">
               {circle.avatar_url ? (
-                <Image
+                <img
                   src={circle.avatar_url}
                   alt={circle.name}
-                  fill
-                  className="object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : null}
             </div>
 
-            <div>
-              <h1 className="text-3xl font-bold">
+            <div className="min-w-0">
+              <h1 className="break-words text-2xl font-bold sm:text-3xl">
                 {circle.name}
               </h1>
 
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 break-words text-sm text-muted-foreground">
                 {circle.description ??
                   "No description available."}
               </p>
 
               <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
-                <span>
-                  {memberCount} members
-                </span>
-
                 {owner && (
                   <span>
                     Owner: {owner.name}
@@ -86,14 +82,12 @@ export default function CircleHeader({
             </div>
           </div>
 
-          <button
-            type="button"
-            className="rounded-md border px-4 py-2"
-          >
-            {isMember
-              ? "Joined"
-              : "Join Circle"}
-          </button>
+          <CircleMembershipButton
+            circleId={circle.id}
+            ownerPersonaId={circle.owner_persona_id}
+            initialIsMember={isMember}
+            initialMemberCount={memberCount}
+          />
         </div>
       </div>
     </div>

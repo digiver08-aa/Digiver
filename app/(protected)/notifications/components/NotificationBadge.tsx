@@ -3,8 +3,7 @@
 import { useNotifications } from "@/hooks/useNotifications";
 
 export function NotificationBadge() {
-  const { unreadCount } =
-    useNotifications();
+  const { unreadCount } = useNotifications();
 
   if (unreadCount <= 0) {
     return null;
@@ -12,26 +11,10 @@ export function NotificationBadge() {
 
   return (
     <span
-      className="
-        absolute
-        -top-1
-        -right-1
-        flex
-        h-5
-        min-w-5
-        items-center
-        justify-center
-        rounded-full
-        bg-red-500
-        px-1
-        text-[10px]
-        font-semibold
-        text-white
-      "
+      className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white"
+      aria-hidden="true"
     >
-      {unreadCount > 99
-        ? "99+"
-        : unreadCount}
+      {unreadCount > 99 ? "99+" : unreadCount}
     </span>
   );
 }

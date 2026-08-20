@@ -1,11 +1,5 @@
 "use client";
 
-// =====================================================
-// DIGIVER
-// PHASE 7 — MESSAGING SYSTEM
-// MessageProvider.tsx
-// =====================================================
-
 import {
   useCallback,
   useEffect,
@@ -14,9 +8,7 @@ import {
   useState,
 } from "react";
 
-import {
-  MessageContext,
-} from "@/context/MessageContext";
+import { MessageContext } from "@/context/MessageContext";
 
 import type {
   Conversation,
@@ -38,153 +30,131 @@ interface Props {
   children: React.ReactNode;
 }
 
-export function MessageProvider({
-  children,
-}: Props) {
-  const [
-    conversations,
-    setConversations,
-  ] = useState<Conversation[]>([]);
-
-  const [
-    messages,
-    setMessages,
-  ] = useState<Message[]>([]);
-
-  const [
-    activeConversation,
-    setActiveConversation,
-  ] = useState<Conversation | null>(
-    null
-  );
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] = useState<
-    string | null
-  >(null);
+export function MessageProvider({ children }: Props) {
+  const [conversations, setConversations] =
+    useState<Conversation[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [activeConversation, setActiveConversationState] =
+    useState<Conversation | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const subscribedConversationRef =
     useRef<string | null>(null);
 
-  const refreshConversations =
-    useCallback(async () => {
+  const refreshConversations = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await getConversations();
+      setConversations(response.conversations);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to load conversations.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const refreshMessages = useCallback(
+    async (conversationId: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await getMessages(conversationId);
+        setMessages(response.messages);
+      } catch (err) {
+        setMessages([]);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to load messages.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  const createConversation = useCallback(
+    async (input: CreateConversationInput) => {
       try {
         setLoading(true);
         setError(null);
 
         const response =
-          await getConversations();
+          await createConversationService(input);
 
-        setConversations(
-          response.conversations
-        );
+        setConversations((previous) => [
+          response.conversation,
+          ...previous,
+        ]);
       } catch (err) {
         setError(
           err instanceof Error
             ? err.message
-            : "Failed to load conversations"
+            : "Failed to create conversation.",
         );
+        throw err;
       } finally {
         setLoading(false);
       }
-    }, []);
+    },
+    [],
+  );
 
-  const refreshMessages =
-    useCallback(
-      async (conversationId: string) => {
-        try {
-          setLoading(true);
-          setError(null);
+  const sendMessage = useCallback(
+    async (input: SendMessageInput) => {
+      try {
+        setSending(true);
+        setError(null);
 
-          const response =
-            await getMessages(
-              conversationId
-            );
+        const response =
+          await sendMessageService(input);
 
-          setMessages(
-            response.messages
-          );
-        } catch (err) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to load messages"
-          );
-        } finally {
-          setLoading(false);
-        }
-      },
-      []
-    );
+        setMessages((previous) => [
+          ...previous,
+          response.message,
+        ]);
 
-  const createConversation =
-    useCallback(
-      async (
-        input: CreateConversationInput
-      ) => {
-        try {
-          setLoading(true);
-          setError(null);
+        await refreshConversations();
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to send message.",
+        );
+        throw err;
+      } finally {
+        setSending(false);
+      }
+    },
+    [refreshConversations],
+  );
 
-          const response =
-            await createConversationService(
-              input
-            );
+  const setActiveConversation = useCallback(
+    (conversation: Conversation | null) => {
+      setError(null);
 
-          setConversations(
-            (previous) => [
-              response.conversation,
-              ...previous,
-            ]
-          );
-        } catch (err) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to create conversation"
-          );
+      if (!conversation) {
+        setMessages([]);
+      } else if (
+        activeConversation?.id !== conversation.id
+      ) {
+        setMessages([]);
+      }
 
-          throw err;
-        } finally {
-          setLoading(false);
-        }
-      },
-      []
-    );
-
-  const sendMessage =
-    useCallback(
-      async (input: SendMessageInput) => {
-        try {
-          setError(null);
-
-          const response =
-            await sendMessageService(
-              input
-            );
-
-          setMessages(
-            (previous) => [
-              ...previous,
-              response.message,
-            ]
-          );
-
-          await refreshConversations();
-        } catch (err) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to send message"
-          );
-
-          throw err;
-        }
-      },
-      [refreshConversations]
-    );
+      setActiveConversationState(conversation);
+    },
+    [activeConversation?.id],
+  );
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -193,53 +163,41 @@ export function MessageProvider({
   }, [refreshConversations]);
 
   useEffect(() => {
-    const conversationId =
-      activeConversation?.id;
+    const conversationId = activeConversation?.id;
 
     if (!conversationId) {
       return;
     }
 
     queueMicrotask(() => {
-      void refreshMessages(
-        conversationId
-      );
+      void refreshMessages(conversationId);
     });
 
     if (
       subscribedConversationRef.current &&
-      subscribedConversationRef.current !==
-        conversationId
+      subscribedConversationRef.current !== conversationId
     ) {
       unsubscribeFromConversation(
-        subscribedConversationRef.current
+        subscribedConversationRef.current,
       );
     }
 
     subscribeToConversation(
       conversationId,
       async () => {
-        await refreshMessages(
-          conversationId
-        );
-
+        await refreshMessages(conversationId);
         await refreshConversations();
-      }
+      },
     );
 
-    subscribedConversationRef.current =
-      conversationId;
+    subscribedConversationRef.current = conversationId;
 
     return () => {
-      unsubscribeFromConversation(
-        conversationId
-      );
-
-      subscribedConversationRef.current =
-        null;
+      unsubscribeFromConversation(conversationId);
+      subscribedConversationRef.current = null;
     };
   }, [
-    activeConversation,
+    activeConversation?.id,
     refreshMessages,
     refreshConversations,
   ]);
@@ -248,18 +206,14 @@ export function MessageProvider({
     () => ({
       conversations,
       messages,
-
       activeConversation,
-
       loading,
+      sending,
       error,
-
       refreshConversations,
       refreshMessages,
-
       createConversation,
       sendMessage,
-
       setActiveConversation,
     }),
     [
@@ -267,18 +221,18 @@ export function MessageProvider({
       messages,
       activeConversation,
       loading,
+      sending,
       error,
       refreshConversations,
       refreshMessages,
       createConversation,
       sendMessage,
-    ]
+      setActiveConversation,
+    ],
   );
 
   return (
-    <MessageContext.Provider
-      value={value}
-    >
+    <MessageContext.Provider value={value}>
       {children}
     </MessageContext.Provider>
   );

@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 
 import { authService } from "@/services/auth";
@@ -29,7 +31,9 @@ export function SignupForm() {
 
     setError(null);
 
-    if (!email.trim()) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
       setError("Email is required.");
       return;
     }
@@ -60,7 +64,7 @@ export function SignupForm() {
     try {
       const result =
         await authService.signUp({
-          email,
+          email: normalizedEmail,
           password,
         });
 
@@ -74,6 +78,8 @@ export function SignupForm() {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+    } catch {
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -81,7 +87,7 @@ export function SignupForm() {
 
   if (success) {
     return (
-      <div className="w-full max-w-md rounded-lg border p-8 text-center">
+      <div className="w-full max-w-md rounded-lg border p-8 text-center" role="status" aria-live="polite">
         <h1 className="mb-4 text-2xl font-bold">
           Account Created
         </h1>
@@ -101,10 +107,16 @@ export function SignupForm() {
 
       <form
         onSubmit={handleSubmit}
+        aria-describedby={error ? "signup-error" : undefined}
         className="space-y-4"
       >
+        <label htmlFor="signup-email" className="sr-only">Email</label>
         <input
+          id="signup-email"
           type="email"
+          autoComplete="email"
+          inputMode="email"
+          required
           placeholder="Email"
           value={email}
           onChange={(e) =>
@@ -113,8 +125,13 @@ export function SignupForm() {
           className="w-full rounded-md border p-3"
         />
 
+        <label htmlFor="signup-password" className="sr-only">Password</label>
         <input
+          id="signup-password"
           type="password"
+          autoComplete="new-password"
+          minLength={8}
+          required
           placeholder="Password"
           value={password}
           onChange={(e) =>
@@ -125,8 +142,13 @@ export function SignupForm() {
           className="w-full rounded-md border p-3"
         />
 
+        <label htmlFor="signup-confirm-password" className="sr-only">Confirm Password</label>
         <input
+          id="signup-confirm-password"
           type="password"
+          autoComplete="new-password"
+          minLength={8}
+          required
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={(e) =>
@@ -138,10 +160,14 @@ export function SignupForm() {
         />
 
         {error && (
-          <p className="text-sm text-red-500">
+          <p id="signup-error" role="alert" aria-live="assertive" className="text-sm text-red-500">
             {error}
           </p>
         )}
+
+        <p className="text-sm text-muted-foreground">
+          Already have an account? <Link href="/login" className="underline underline-offset-4">Log in</Link>
+        </p>
 
         <button
           type="submit"
